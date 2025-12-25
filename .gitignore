@@ -1,0 +1,113 @@
+# ============================================
+# SECRETS - NEVER COMMIT THESE!
+# ============================================
+# OAuth client credentials
+client_secret.json
+secrets/
+
+# OAuth tokens
+tokens/
+
+# Service account credentials
+credentials.json
+*.json
+!pom.xml
+
+# AWS credentials
+.aws/
+
+# Environment variables with secrets
+.env
+.env.local
+
+
+# ============================================
+# JAVA / MAVEN
+# ============================================
+# Compiled class files
+target/
+*.class
+
+# Maven wrapper
+.mvn/
+mvnw
+mvnw.cmd
+
+# Package files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+
+# ============================================
+# IDE / EDITOR FILES
+# ============================================
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# NetBeans
+nbproject/
+nbbuild/
+dist/
+nbdist/
+
+
+# ============================================
+# OPERATING SYSTEM
+# ============================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+
+
+# ============================================
+# LOGS AND TEMPORARY FILES
+# ============================================
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+
+
+# ============================================
+# PROJECT SPECIFIC
+# ============================================
+# Local test data or scratch files
+scratch/
+test-data/
+local-test/
+
+# Build output
+deploy/
+lambda-package/
