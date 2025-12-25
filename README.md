@@ -1,6 +1,6 @@
 # jp-vocab-assistant
 
-An AWS-based automation tool that monitors a shared Google Document for Japanese vocabulary assignments and assists in generating example sentences using AI.
+An AWS-based **serverless automation tool** that monitors a shared Google Document for Japanese vocabulary assignments and assists in generating example sentences using AI.
 
 ---
 
@@ -26,8 +26,39 @@ This project automates both steps using AWS and external APIs.
 - Automatically detect new vocabulary assignments in a Google Doc
 - Notify me when a new task appears
 - Generate Japanese example sentence suggestions (JLPT N3 level)
-- Learn and practice real-world AWS architecture
-- Build a portfolio-quality serverless project
+- Optionally write selected sentences back to Google Docs
+- Learn and practice **real-world serverless AWS architecture**
+- Build a portfolio-quality automation project
+
+---
+
+## 🧠 Architectural Approach
+
+This project is intentionally designed as a **function-oriented, event-driven system**, not a continuously running application.
+
+### Why not Spring?
+
+Spring and Spring Boot are excellent frameworks for long-running backend services (REST APIs, web servers, microservices).  
+However, they provide little benefit for this project because:
+
+- There is **no web server**
+- There are **no HTTP endpoints**
+- The logic runs **periodically**, not continuously
+- Execution is **short-lived and stateless**
+
+Using Spring would:
+- Increase AWS Lambda cold start time
+- Add unnecessary framework complexity
+- Provide little architectural value for a scheduled automation task
+
+### Chosen approach
+
+- **AWS Lambda** for execution and orchestration
+- **Plain Java** for business logic and domain modeling
+- Explicit dependency wiring (no framework container)
+- Framework-agnostic core logic that can be tested locally
+
+This mirrors common **AWS production patterns** for background automation and scheduled workflows.
 
 ---
 
@@ -38,6 +69,8 @@ EventBridge (schedule)
         ↓
 AWS Lambda (Java)
         ↓
+Application Services (plain Java)
+        ↓
 Google Docs API
         ↓
 DynamoDB (task state)
@@ -47,19 +80,22 @@ OpenAI API (sentence generation)
 Notification (Email / Slack / LINE)
 ```
 
+> AWS Lambda controls **when** the workflow runs.  
+> Application code controls **what** happens.
+
 ---
 
 ## 🛠️ Tech Stack
 
-- **Language**: Java
+- **Language**: Java (no application framework)
 - **Cloud**: AWS
-  - Lambda
-  - EventBridge
-  - DynamoDB
-  - Secrets Manager
+    - Lambda
+    - EventBridge
+    - DynamoDB
+    - Secrets Manager
 - **APIs**:
-  - Google Docs API
-  - OpenAI API
+    - Google Docs API
+    - OpenAI API
 - **Infrastructure as Code**: CloudFormation (Terraform optional)
 - **Notifications**: Email / Slack / LINE (TBD)
 
@@ -70,11 +106,16 @@ Notification (Email / Slack / LINE)
 ```
 jp-vocab-assistant/
 ├── README.md
-├── docs/             # Architecture and design documentation
-├── lambda/           # AWS Lambda functions (Java)
-├── infrastructure/   # CloudFormation / Terraform templates
-├── openai/           # Prompt design and examples
-└── scripts/          # Local testing and utilities
+├── docs/                               # Architecture and design documentation
+├── lambda/                             # AWS Lambda handlers (orchestration only)
+├── infrastructure/                     # CloudFormation / Terraform templates
+├── src/java/io/github/jcloix/jpvocab   # Application core (plain Java)
+│   ├── config                          # Configuration objects
+│   ├── handler                         # Lambda handlers
+│   ├── model                           # Domain models
+│   └── service                         # Application services / workflows
+├── openai/                             # Prompt design and examples
+└── scripts/                            # Local testing and utilities
 ```
 
 ---
@@ -118,7 +159,7 @@ jp-vocab-assistant/
 - Single Google Document
 - Polling-based detection (no real-time push notifications)
 
-These constraints are intentional to keep the project focused on learning and clean architecture.
+These constraints are intentional to keep the project focused on **clean architecture and serverless design principles**.
 
 ---
 
