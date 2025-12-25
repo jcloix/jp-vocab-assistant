@@ -15,15 +15,16 @@ import java.util.List;
  *
  * First run: Will open browser for you to authorize the app
  * Subsequent runs: Uses stored tokens automatically
- * Test with document id 1Luy3shZZHsTz4hqCz4qhoupUHCtlFOyrvb3_UzSAoLM
+ *
  */
 public class LocalTestWithOAuth {
     public static void main(String[] args) throws Exception {
         // Replace with your actual values
-        String clientSecretPath = "client_secret.json";  // Downloaded from Google Cloud Console
-        String tokensDirectory = "tokens";               // Where to store refresh tokens
-        String documentId = "your-google-doc-id";        // Get from document URL
-        String myName = "Jerome";                        // Your name as it appears in the doc
+        // Get configuration from environment variables
+        String clientSecretPath = System.getenv("GOOGLE_CREDENTIALS_PATH");
+        String documentId = System.getenv("GOOGLE_DOC_ID");
+        String tokensDirectory = System.getenv("TOKEN_FOLDER");
+        String myName = System.getenv("MY_NAME");
 
         System.out.println("Authenticating with Google...");
         Docs docsClient = GoogleDocsAuth.getDocsServiceWithOAuth(clientSecretPath, tokensDirectory);
