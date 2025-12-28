@@ -1,6 +1,8 @@
 package io.github.jcloix.jpvocab.model;
 
 
+import io.github.jcloix.jpvocab.domain.normalization.NormalizedWord;
+
 /**
  * Domain model representing a vocabulary task extracted from the Google Docs table.
  *
@@ -22,19 +24,34 @@ package io.github.jcloix.jpvocab.model;
  * <p>It should remain stable and not contain orchestration or parsing logic.
  */
 public class VocabTask {
-
-    private final String word;
+    private final Integer rowId;
+    private final String rawWord;
+    private final NormalizedWord normalizedWord;
     private final String assignedTo;
     private final String exampleSentence;
 
-    public VocabTask(String word, String assignedTo, String exampleSentence) {
-        this.word = word;
+    public VocabTask(Integer rowId, String rawWord, NormalizedWord normalizedWord, String assignedTo, String exampleSentence) {
+        this.rowId = rowId;
+        this.rawWord = rawWord;
+        this.normalizedWord = normalizedWord;
         this.assignedTo = assignedTo;
         this.exampleSentence = exampleSentence == null ? "" : exampleSentence;
     }
 
+    public Integer getRowId() {
+        return rowId;
+    }
+
     public String getWord() {
-        return word;
+        return getNormalizedWord().baseWord();
+    }
+
+    public String getRawWord() {
+        return rawWord;
+    }
+
+    public NormalizedWord getNormalizedWord() {
+        return normalizedWord;
     }
 
     public String getAssignedTo() {
@@ -52,9 +69,12 @@ public class VocabTask {
     @Override
     public String toString() {
         return "VocabTask{" +
-                "word='" + word + '\'' +
+                "rowId=" + rowId +
+                ", rawWord='" + rawWord + '\'' +
+                ", normalizedWord='" + (normalizedWord != null ? normalizedWord.toString() : "null") + '\'' +
                 ", assignedTo='" + assignedTo + '\'' +
-                ", exampleSentence='" + exampleSentence + '\'' +
+                ", exampleSentence='" + exampleSentence.replace("\n", "\\n") + '\'' +
                 '}';
     }
+
 }

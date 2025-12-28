@@ -2,6 +2,7 @@ package io.github.jcloix.jpvocab.service.source;
 
 import com.google.api.services.docs.v1.Docs;
 import com.google.api.services.docs.v1.model.*;
+import io.github.jcloix.jpvocab.domain.normalization.WordNormalizer;
 import io.github.jcloix.jpvocab.model.VocabTask;
 import io.github.jcloix.jpvocab.service.VocabTaskParser;
 import org.junit.jupiter.api.BeforeEach;
@@ -343,7 +344,7 @@ class GoogleDocsTaskSourceTest {
     private List<VocabTask> createMockTasks(int count) {
         List<VocabTask> tasks = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            tasks.add(new VocabTask("sa","s","dfs"));
+            tasks.add(new VocabTask(2,"sa", WordNormalizer.normalize("sa"),"s","dfs"));
         }
         return tasks;
     }

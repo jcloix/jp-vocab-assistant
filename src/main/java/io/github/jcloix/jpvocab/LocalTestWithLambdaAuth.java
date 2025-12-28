@@ -2,7 +2,6 @@ package io.github.jcloix.jpvocab;
 
 import com.google.api.services.docs.v1.Docs;
 import io.github.jcloix.jpvocab.config.GoogleDocsAuth;
-import io.github.jcloix.jpvocab.local.LocalOAuthGenerator;
 import io.github.jcloix.jpvocab.model.VocabTask;
 import io.github.jcloix.jpvocab.service.TaskDetectionService;
 import io.github.jcloix.jpvocab.service.VocabTaskParser;
@@ -13,23 +12,23 @@ import io.github.jcloix.jpvocab.util.LambdaLogger;
 import java.util.List;
 
 /**
- * Local test using OAuth 2.0 authentication with your personal Google account.
+ * Local test using Lambda-safe UserCredentials (refresh token)
  *
- * First run: Will open browser for you to authorize the app
- * Subsequent runs: Uses stored tokens automatically
- *
+ * Requires environment variables:
+ * - GOOGLE_CLIENT_ID
+ * - GOOGLE_CLIENT_SECRET
+ * - GOOGLE_REFRESH_TOKEN
+ * - GOOGLE_DOC_ID
+ * - MY_NAME
  */
-public class LocalTestWithOAuth {
+public class LocalTestWithLambdaAuth {
     public static void main(String[] args) throws Exception {
-        // Replace with your actual values
-        // Get configuration from environment variables
-        String clientSecretPath = System.getenv("GOOGLE_CREDENTIALS_PATH");
+
         String documentId = System.getenv("GOOGLE_DOC_ID");
-        String tokensDirectory = System.getenv("TOKEN_FOLDER");
         String myName = System.getenv("MY_NAME");
 
-        LambdaLogger.log("Authenticating with Google...");
-        Docs docsClient = LocalOAuthGenerator.getDocsServiceWithOAuth(clientSecretPath, tokensDirectory);
+        LambdaLogger.log("Authenticating with Google using refresh token...");
+        Docs docsClient = GoogleDocsAuth.getDocsServiceWithOAuth();
 
         LambdaLogger.log("Reading document...");
         VocabTaskParser parser = new VocabTaskParser();

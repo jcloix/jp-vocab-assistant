@@ -1,6 +1,9 @@
 package io.github.jcloix.jpvocab.service;
 
+import io.github.jcloix.jpvocab.domain.normalization.NormalizedWord;
+import io.github.jcloix.jpvocab.domain.normalization.WordNormalizer;
 import io.github.jcloix.jpvocab.model.VocabTask;
+import io.github.jcloix.jpvocab.util.LambdaLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +30,12 @@ public class VocabTaskParser {
                 continue;
             }
 
+            NormalizedWord nw = WordNormalizer.normalize(word);
+
             tasks.add(new VocabTask(
+                    i,
                     word,
+                    nw,
                     row.get(ASSIGNED_TO_COL),
                     row.get(EXAMPLE_COL)
             ));
