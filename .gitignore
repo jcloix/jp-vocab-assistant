@@ -2,7 +2,7 @@
 # SECRETS - NEVER COMMIT THESE!
 # ============================================
 # OAuth client credentials
-client_secret.json
+task-source/src/main/resources/client_secret.json
 secrets/
 
 # OAuth tokens

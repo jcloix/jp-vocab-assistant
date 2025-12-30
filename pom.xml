@@ -6,13 +6,54 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.jcloix.jpvocab</groupId>
-    <artifactId>task-detector</artifactId>
+    <artifactId>jp-vocab</artifactId>
     <version>0.1.0</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>domain</module>
+        <module>util</module>
+        <module>aws-support</module>
+        <module>persistence</module>
+        <module>task-source</module>
+        <module>ai-generation</module>
+        <module>notification</module>
+        <module>lambda-task-detector</module>
+        <module>lambda-discord-interaction</module>
+        <module>lambda-task-completion</module>
+    </modules>
 
     <properties>
+        <!-- Java -->
+        <java.version>17</java.version>
+        <maven.compiler.release>17</maven.compiler.release>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- AWS -->
+        <aws.sdk.version>2.26.6</aws.sdk.version>
+        <aws.lambda.core.version>1.2.3</aws.lambda.core.version>
+        <aws.lambda.events.version>3.11.5</aws.lambda.events.version>
+
+        <!-- Google -->
+        <google.auth.version>1.26.0</google.auth.version>
+        <google.docs.version>v1-rev20250917-2.0.0</google.docs.version>
+        <google.api.client.version>2.8.1</google.api.client.version>
+        <google.oauth.jetty.version>1.36.0</google.oauth.jetty.version>
+        <google.http.gson.version>1.45.1</google.http.gson.version>
+        <google.genai.version>1.32.0</google.genai.version>
+
+        <!-- Utils -->
+        <jackson.version>2.17.2</jackson.version>
+        <slf4j.version>2.0.13</slf4j.version>
+        <bouncycastle.version>1.70</bouncycastle.version>
+        <commons.codec.version>1.15</commons.codec.version>
+        <kuromoji.version>0.9.0</kuromoji.version>
+
+        <!-- Test -->
+        <junit.version>5.10.2</junit.version>
+        <mockito.version>5.6.0</mockito.version>
     </properties>
 
     <dependencyManagement>
@@ -20,118 +61,63 @@
             <dependency>
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>bom</artifactId>
-                <version>2.26.6</version>
+                <version>${aws.sdk.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!-- Internal modules -->
+            <dependency>
+                <groupId>io.github.jcloix.jpvocab</groupId>
+                <artifactId>domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.jcloix.jpvocab</groupId>
+                <artifactId>util</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.jcloix.jpvocab</groupId>
+                <artifactId>task-source</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.jcloix.jpvocab</groupId>
+                <artifactId>persistence</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.jcloix.jpvocab</groupId>
+                <artifactId>ai-generation</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.jcloix.jpvocab</groupId>
+                <artifactId>notification</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.jcloix.jpvocab</groupId>
+                <artifactId>aws-support</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>1.78</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
-
-        <!-- AWS Lambda -->
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-lambda-java-core</artifactId>
-            <version>1.2.3</version>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>dynamodb</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-lambda-java-events</artifactId>
-            <version>3.11.5</version>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>sqs</artifactId>
-        </dependency>
-
-        <!-- ===================== -->
-        <!-- GOOGLE DOCS STACK     -->
-        <!-- ===================== -->
-
-        <!-- Auth -->
-        <dependency>
-            <groupId>com.google.auth</groupId>
-            <artifactId>google-auth-library-oauth2-http</artifactId>
-            <version>1.26.0</version>
-        </dependency>
-
-        <!-- Docs API (2.x line EXISTS) -->
-        <dependency>
-            <groupId>com.google.apis</groupId>
-            <artifactId>google-api-services-docs</artifactId>
-            <version>v1-rev20250917-2.0.0</version>
-        </dependency>
-
-        <!-- Core Google API client (2.x) -->
-        <dependency>
-            <groupId>com.google.api-client</groupId>
-            <artifactId>google-api-client</artifactId>
-            <version>2.8.1</version>
-        </dependency>
-
-        <!-- OAuth Jetty (NO 2.x EXISTS — MUST BE 1.x) -->
-        <dependency>
-            <groupId>com.google.oauth-client</groupId>
-            <artifactId>google-oauth-client-jetty</artifactId>
-            <version>1.36.0</version>
-        </dependency>
-
-        <!-- HTTP / JSON -->
-        <dependency>
-            <groupId>com.google.http-client</groupId>
-            <artifactId>google-http-client-gson</artifactId>
-            <version>1.45.1</version>
-        </dependency>
-
-        <!-- ===================== -->
-        <!-- OTHER DEPENDENCIES    -->
-        <!-- ===================== -->
-
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.15</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.atilika.kuromoji</groupId>
-            <artifactId>kuromoji-ipadic</artifactId>
-            <version>0.9.0</version>
-        </dependency>
-
-        <!-- Gemini API -->
-        <dependency>
-            <groupId>com.google.genai</groupId>
-            <artifactId>google-genai</artifactId>
-            <version>1.32.0</version>
-        </dependency>
-
-        <!-- JSON -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.17.2</version>
-        </dependency>
-
-        <!-- Logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>2.0.13</version>
-        </dependency>
-
-        <!-- Discord -->
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.70</version>
-        </dependency>
-
         <!-- ================= -->
         <!-- TESTING           -->
         <!-- ================= -->
@@ -156,47 +142,30 @@
             <version>5.6.0</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
         <plugins>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
-                <configuration>
-                    <source>17</source>
-                    <target>17</target>
-                </configuration>
-            </plugin>
-
+            <!-- Unit tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
                 <configuration>
-                    <useModulePath>false</useModulePath>
+                    <excludedGroups>integration</excludedGroups>
                 </configuration>
             </plugin>
+
+            <!-- Integration tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.1</version>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <transformers>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>io.github.jcloix.jpvocab.handler.TaskDetectorHandler</mainClass>
-                        </transformer>
-                    </transformers>
-                </configuration>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.2.5</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
                         <goals>
-                            <goal>shade</goal>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
                         </goals>
                     </execution>
                 </executions>
