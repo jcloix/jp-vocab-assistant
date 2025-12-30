@@ -83,7 +83,7 @@ public class DiscordInteractionHandler implements RequestHandler<Map<String, Obj
             Integer type = extractInteger(payload.get("type"));
             if (type != null && type == 1) {
                 LambdaLogger.log("PING detected");
-                return pongResponse();
+                return pongResponse(rawBody);
             }
 
             Map<String, Object> response = enqueueInteraction(payload);
@@ -140,9 +140,7 @@ public class DiscordInteractionHandler implements RequestHandler<Map<String, Obj
         long tEnd = System.nanoTime();
         LambdaLogger.log("enqueueInteraction total took " + ms(tEnd - t0) + " ms");
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("type", 6); // DEFERRED_UPDATE_MESSAGE
-        return response;
+        return httpJsonResponse(200, Map.of("type", 6));
     }
 
     private boolean verifySignature(Map<String, String> headers, String body) {
@@ -167,17 +165,28 @@ public class DiscordInteractionHandler implements RequestHandler<Map<String, Obj
         }
     }
 
-    private Map<String, Object> pongResponse() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("type", 1);
-        return response;
+    private Map<String, Object> httpJsonResponse(int statusCode, Object body) {
+        try {
+            Map<String, Object> response = new HashMap<>();
+            response.put("statusCode", statusCode);
+            response.put("headers", Map.of(
+                    "Content-Type", "application/json"
+            ));
+            response.put("body", MAPPER.writeValueAsString(body));
+            return response;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Map<String, Object> pongResponse(String body) {
+        return httpJsonResponse(200, Map.of("type", 1));
     }
 
     private Map<String, Object> errorResponse(String msg) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", "error");
-        response.put("error", msg);
-        return response;
+        return httpJsonResponse(401, Map.of(
+                "error", msg
+        ));
     }
 
     private Integer extractInteger(Object obj) {
