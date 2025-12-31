@@ -49,7 +49,7 @@ public class TaskRepository {
     }
 
     /**
-     * Save a new task.
+     * Save a new task with ordered choices.
      */
     public void saveNewTask(String docId, int rowId, String word, List<String> choices) {
         Instant now = Instant.now();
@@ -60,7 +60,14 @@ public class TaskRepository {
         item.put("word", AttributeValue.fromS(word));
         item.put("rowId", AttributeValue.fromN(String.valueOf(rowId)));
         item.put("status", AttributeValue.fromS("PENDING"));
-        item.put("choices", AttributeValue.fromSs(choices));
+
+        // Preserve order using a List attribute instead of a Set
+        item.put("choices", AttributeValue.fromL(
+                choices.stream()
+                        .map(AttributeValue::fromS)
+                        .toList()
+        ));
+
         item.put("createdAt", AttributeValue.fromS(now.toString()));
         item.put("updatedAt", AttributeValue.fromS(now.toString()));
 
@@ -81,7 +88,7 @@ public class TaskRepository {
 
     private void updateStatus(String docId, String word, int rowId, String status, Integer selectedChoice) {
         Map<String, String> attrNames = new HashMap<>();
-        attrNames.put("#S", "status"); // alias the reserved word
+        attrNames.put("#S", "status");
 
         Map<String, AttributeValue> attrValues = new HashMap<>();
         attrValues.put(":status", AttributeValue.fromS(status));
@@ -101,17 +108,22 @@ public class TaskRepository {
                         "SK", AttributeValue.fromS(sk(word, rowId))
                 ))
                 .updateExpression(update)
-                .expressionAttributeNames(attrNames)  // <--- add this
+                .expressionAttributeNames(attrNames)
                 .expressionAttributeValues(attrValues)
                 .build());
     }
 
     private PersistedTask mapToTask(Map<String, AttributeValue> item) {
+        // Read choices as a list to preserve order
+        List<String> choices = item.get("choices").l().stream()
+                .map(AttributeValue::s)
+                .toList();
+
         return new PersistedTask(
                 item.get("PK").s().substring(4), // remove "DOC#"
                 Integer.parseInt(item.get("rowId").n()),
                 item.get("word").s(),
-                item.get("choices").ss(),
+                choices,
                 item.get("status").s(),
                 Instant.parse(item.get("createdAt").s()),
                 Instant.parse(item.get("updatedAt").s())

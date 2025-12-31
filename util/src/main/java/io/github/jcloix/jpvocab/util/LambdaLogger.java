@@ -1,6 +1,8 @@
 package io.github.jcloix.jpvocab.util;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class LambdaLogger {
     private static LoggerWrapper logger;
@@ -14,6 +16,14 @@ public class LambdaLogger {
     public static void log(String message) {
         if (logger != null) logger.log(message);
         else System.out.println(message); // fallback
+    }
+
+    /** Log an exception with stack trace */
+    public static void log(String message, Throwable t) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        t.printStackTrace(pw);
+        log(message + "\n" + sw);
     }
 
     /** Logging usable in static blocks, before Context exists */

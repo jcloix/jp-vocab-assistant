@@ -20,4 +20,6 @@ import java.util.List;
  */
 public interface TaskSource {
     List<VocabTask> fetchTasks();
+
+    ResultTask completeTask(String word, int rowId, String resolvedSentence);
 }

@@ -46,7 +46,7 @@ public class GoogleDocsAuth {
         return new Docs.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
                 JSON_FACTORY,
-                new HttpCredentialsAdapter(credentials.createScoped(Collections.singleton(DocsScopes.DOCUMENTS_READONLY)))
+                new HttpCredentialsAdapter(credentials.createScoped(Collections.singleton(DocsScopes.DOCUMENTS)))
         ).setApplicationName("JPVocab Assistant")
                 .build();
     }

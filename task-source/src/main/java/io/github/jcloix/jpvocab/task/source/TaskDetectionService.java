@@ -27,7 +27,7 @@ public class TaskDetectionService {
 
     public List<VocabTask> detectPendingTasks(List<VocabTask> allTasks) {
         return allTasks.stream()
-                .filter(task -> myName.equals(task.getAssignedTo()))
+                .filter(task -> task.getAssignedTo().contains(myName))
                 .filter(task -> !task.isSentenceDoneBy(myName))
                 .collect(Collectors.toList());
     }

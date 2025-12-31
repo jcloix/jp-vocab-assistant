@@ -93,7 +93,7 @@ public class DiscordInteractionHandler implements RequestHandler<Map<String, Obj
             return response;
 
         } catch (Exception e) {
-            LambdaLogger.log("ERROR: " + e.getMessage());
+            LambdaLogger.log("ERROR: " ,e);
             return errorResponse(e.getMessage());
         }
     }

@@ -60,7 +60,7 @@ public class LocalOAuthGenerator {
                 GoogleNetHttpTransport.newTrustedTransport(),
                 JSON_FACTORY,
                 clientSecrets,
-                Collections.singleton(DocsScopes.DOCUMENTS_READONLY)
+                Collections.singleton(DocsScopes.DOCUMENTS)
         )
                 .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(tokensDirectory)))
                 .setAccessType("offline")
@@ -68,7 +68,15 @@ public class LocalOAuthGenerator {
 
         // Get credentials (will open browser on first run)
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-        Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+        Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user-forced");
+
+        // 🔹 Log the refresh token here
+        if (credential.getRefreshToken() != null) {
+            System.out.println("Your refresh token is:");
+            System.out.println(credential.getRefreshToken());
+        } else {
+            System.out.println("Refresh token is null. If you already authorized before, Google may not return it again.");
+        }
 
         // Build and return Docs service
         return new Docs.Builder(

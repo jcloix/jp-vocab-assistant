@@ -10,5 +10,6 @@ terraform {
 }
 
 provider "aws" {
-  region = "ap-northeast-1" # Tokyo
+  region  = "ap-northeast-1"
+  profile = "terraform"
 }

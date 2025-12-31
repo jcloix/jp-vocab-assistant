@@ -14,8 +14,6 @@ import io.github.jcloix.jpvocab.ai.*;
 import io.github.jcloix.jpvocab.util.LambdaLogger;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -208,12 +206,7 @@ public class TaskDetectorHandler implements RequestHandler<Void, Map<String, Obj
     }
 
     private Map<String, Object> buildErrorResponse(Context context, Exception e) {
-        context.getLogger().log("ERROR: " + e.getMessage());
-        StringWriter sw = new StringWriter();
-        e.printStackTrace(new PrintWriter(sw));
-        String stackTrace = sw.toString();
-
-        context.getLogger().log(stackTrace);
+        LambdaLogger.log("Error:",e);
 
         Map<String, Object> response = new HashMap<>();
         response.put("status", "error");
