@@ -43,6 +43,9 @@ class GoogleDocsRefreshTokenIT {
         List<VocabTask> pending = detector.detectPendingTasks(allTasks);
 
         LambdaLogger.log("✓ Pending tasks for " + myName + ": " + pending.size());
+        for(VocabTask task : pending) {
+            LambdaLogger.log(task.getWord());
+        }
     }
 
     private String requireEnv(String name) {

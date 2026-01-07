@@ -52,6 +52,7 @@ public class TaskDetectorHandler implements RequestHandler<Void, Map<String, Obj
             return buildSuccessResponse(allTasks.size(), pendingTasks.size());
 
         } catch (Exception e) {
+            checkOAuthException(e);
             return buildErrorResponse(context, e);
         } finally {
             aiManager.close(); // close all providers
@@ -212,6 +213,30 @@ public class TaskDetectorHandler implements RequestHandler<Void, Map<String, Obj
         response.put("status", "error");
         response.put("error", e.toString());
         return response;
+    }
+
+    private void checkOAuthException(Exception e) {
+        if (isOAuthInvalidGrant(e)) {
+            LambdaLogger.log("❌ GOOGLE OAUTH REFRESH TOKEN INVALID OR REVOKED");
+            LambdaLogger.log("❌ Manual re-authentication required");
+            try {
+                DiscordNotifier.sendMessage("❌ Issue in OAuth");
+            } catch (Exception ex) {
+                LambdaLogger.log("Issue send Discord notification");
+            }
+        }
+    }
+
+    private boolean isOAuthInvalidGrant(Throwable e) {
+        Throwable t = e;
+        while (t != null) {
+            String msg = t.getMessage();
+            if (msg != null && msg.contains("invalid_grant")) {
+                return true;
+            }
+            t = t.getCause();
+        }
+        return false;
     }
 
 
